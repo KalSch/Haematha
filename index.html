@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#141d20"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="A playable investigation prototype for Mark of Haematha."><title>MARK OF HAEMATHA — First Summer</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<canvas id="world" aria-label="First person game world"></canvas>
+<div id="hud">
+ <div class="left-tools"><button id="mapButton" title="Map and menu" aria-label="Map and menu">◎</button><button id="bagButton" title="Inventory" aria-label="Inventory">▣</button></div>
+ <div id="clock"><span id="location">BELLWETHER PRINT WORKS</span><strong id="time"></strong><small id="status">FIRST SUMMER · PLAYABLE PROTOTYPE</small></div>
+ <button id="notesButton" title="Notebook" aria-label="Notebook">▤</button>
+ <div id="reticle">·</div><div id="target"></div>
+ <div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div>
+ <div id="actions"><button id="jumpButton" class="small" aria-label="Jump">↑<small>JUMP</small></button><button id="attackButton" aria-label="Attack">✦<small id="weaponLabel">FISTS</small></button><button id="duckButton" class="small" aria-label="Crouch, hold to observe">⌄<small>DUCK</small></button><button id="interactButton" aria-label="Interact">◇<small>INTERACT</small></button></div>
+ <div id="vitals"><small>FATIGUE</small><progress id="fatigue" max="100" value="100"></progress><button id="restButton" aria-label="Rest">☾</button></div>
+ <div id="toast" role="status"></div><div id="damage"></div>
+</div>
+<div id="panel" hidden></div>
+<div id="conversation" hidden><div class="conversation-head"><span id="speaker"></span><button id="endTalk">LEAVE ×</button><button id="talkNotes">▤ NOTES</button></div><div id="exchange" aria-live="polite"></div><form id="talkForm"><input id="talkInput" autocomplete="off" maxlength="240" placeholder="Ask a question or say something…" aria-label="Your response"><button>SAY ↵</button></form><small>Local dialogue prototype · ask naturally about people, the blood, the library, or help.</small></div>
+<div id="notes" hidden></div>
+<div id="inspect" hidden><header><span id="inspectTitle"></span><button id="closeInspect">RETURN ×</button></header><canvas id="objectView"></canvas><aside id="objectInfo"></aside><footer>Drag to turn · pinch or scroll to zoom · triple tap to return</footer></div>
+<div id="welcome"><div class="title-mark">⟐</div><p class="eyebrow">FIRST SUMMER / BUILD 0.1</p><h1>MARK OF<br><em>HAEMATHA</em></h1><p class="tagline">Something is wrong in Bellwether.</p><p>Your sister overslept again. Now your coworker hasn’t come in.<br>Your boss has just told you to cover the missing shift.</p><div class="welcome-actions"><button id="begin">ENTER THE PRINT WORKS →</button><button id="resume" hidden>CONTINUE SAVED GAME</button></div><p class="fine">An exploration prototype, not the finished game. A fixed test town, local NPC dialogue, simplified first-person rendering. No account or connection required.</p><details><summary>Controls &amp; installation</summary><p>Phone: landscape recommended. Left stick moves; drag the scene to look. Tap people to talk. Triple tap objects to inspect. Hold DUCK to watch a location. PC: WASD, drag to look, E interact, F inspect, Space jump, C crouch, M map, N notes. Escape closes panels.</p><p>On iPhone, open the hosted game in Safari → Share → Add to Home Screen. Offline play becomes available after one successful online load. Export important saves from Map → Saves.</p></details><div id="bootStatus"></div></div>
+<script src="app.js" defer></script></body></html>
