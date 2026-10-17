@@ -97,13 +97,15 @@ button,a,input,textarea{-webkit-tap-highlight-color:transparent}
 <div id="conversation" hidden><div class="conversation-head"><span id="speaker"></span><button id="endTalk">LEAVE ×</button><button id="talkNotes">▤ NOTES</button></div><div id="exchange" aria-live="polite"></div><form id="talkForm"><input id="talkInput" autocomplete="off" maxlength="240" placeholder="Ask a question or say something…" aria-label="Your response"><button>SAY ↵</button></form><small>Local dialogue prototype · ask naturally about people, the blood, the library, or help.</small></div>
 <div id="notes" hidden></div>
 <div id="inspect" hidden><header><span id="inspectTitle"></span><button id="closeInspect">RETURN ×</button></header><canvas id="objectView"></canvas><aside id="objectInfo"></aside><footer><div class="row"><button id="flipObject">FLIP</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="resetObject">RESET VIEW</button></div><p>Drag to turn and tilt · pinch to zoom · triple tap to return</p></footer></div>
-<div id="welcome"><div class="title-mark">⟐</div><p class="eyebrow">FIRST SUMMER / BUILD 0.2.2</p><h1>MARK OF<br><em>HAEMATHA</em></h1><p class="tagline">Something is wrong in Bellwether.</p><p>Your sister overslept again. Now your coworker hasn’t come in.<br>Your boss has just told you to cover the missing shift.</p><div class="welcome-actions"><button id="begin">ENTER THE PRINT WORKS →</button><button id="resume" hidden>CONTINUE SAVED GAME</button></div><p class="fine">An exploration prototype, not the finished game. A fixed test town, local NPC dialogue, simplified first-person rendering. No account or connection required.</p><details><summary>Controls &amp; installation</summary><p>Phone: landscape recommended. Left stick moves; drag the scene to look. Tap people to talk. Triple tap objects to inspect. Hold DUCK to watch a location. PC: WASD, drag to look, E interact, F inspect, Space jump, C crouch, M map, N notes. Escape closes panels.</p><p>On iPhone, open the hosted game in Safari → Share → Add to Home Screen. Offline play becomes available after one successful online load. Export important saves from Map → Saves.</p></details><div id="bootStatus"></div></div>
+<div id="welcome"><div class="title-mark">⟐</div><p class="eyebrow">FIRST SUMMER / BUILD 0.2.3</p><h1>MARK OF<br><em>HAEMATHA</em></h1><p class="tagline">Something is wrong in Bellwether.</p><p>Your sister overslept again. Now your coworker hasn’t come in.<br>Your boss has just told you to cover the missing shift.</p><div class="welcome-actions"><button id="begin">ENTER THE PRINT WORKS →</button><button id="resume" hidden>CONTINUE SAVED GAME</button></div><p class="fine">An exploration prototype, not the finished game. A fixed test town, local NPC dialogue, simplified first-person rendering. No account or connection required.</p><details><summary>Controls &amp; installation</summary><p>Phone: landscape recommended. Left stick moves; drag the scene to look. Tap people to talk. Triple tap objects to inspect. Hold DUCK to watch a location. PC: WASD, drag to look, E interact, F inspect, Space jump, C crouch, M map, N notes. Escape closes panels.</p><p>On iPhone, open the hosted game in Safari → Share → Add to Home Screen. Offline play becomes available after one successful online load. Export important saves from Map → Saves.</p></details><div id="bootStatus"></div></div>
 <script data-source="app.js">
 'use strict';
 // MARK OF HAEMATHA 0.1 — dependency-free, local-first exploration slice.
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#world'),ctx=canvas.getContext('2d',{alpha:false});
 const VERSION=1, STORE='haematha-pwa-v1', W=26,H=22, FOV=Math.PI/2.8;
+const CAMERA={standing:1.28,crouching:.82,wall:2.2,maxPitch:55*Math.PI/180};
+let cameraHeight=CAMERA.standing,frameEyeHeight=CAMERA.standing,frameHorizon=0,frameProjection=1;
 const grid=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>x===0||y===0||x===W-1||y===H-1?1:0));
 function room(x,y,w,h,type,door){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)if(i===x||i===x+w-1||j===y||j===y+h-1)grid[j][i]=type;grid[door[1]][door[0]]=0;}
 room(2,2,9,9,2,[10,6]);room(16,3,8,10,3,[16,7]);room(2,14,9,6,4,[10,16]);room(17,16,7,5,2,[17,18]);
@@ -156,7 +158,7 @@ function loadSave(s){try{state=structuredClone(validateSave(s));started=true;$('
 function closeAll(){for(const id of ['panel','notes','inspect','conversation'])$('#'+id).hidden=true;talking=null;inspectId=null;pendingTake=null;keys={};joy={x:0,y:0};$('#stick').style.transform='';}
 function startGame(){started=true;$('#welcome').hidden=true;toast('Edith: “Thomas is absent. I need you to cover his shift.”');autoSave('Arrival at the print works');}
 $('#begin').onclick=startGame;$('#resume').onclick=()=>loadSave((storage.auto[0]||storage.manual[0]).state);
-function nearest(){return projected.filter(o=>o.distance<2.7&&Math.abs(o.screenX-canvas.width/2)<canvas.width*.18).sort((a,b)=>a.distance-b.distance)[0];}
+function nearest(){return projected.filter(o=>o.distance<2.7&&Math.abs(o.screenX-canvas.width/2)<canvas.width*.18&&o.top<canvas.height*.64&&o.bottom>canvas.height*.36).sort((a,b)=>a.distance-b.distance)[0];}
 function interact(entity){if(!entity)entity=nearest();if(!entity){toast('Move closer to a person or object. Triple tap an object to inspect it.');return;}if(entity.npc)startTalk(entity.id);else openInspect(entity.id);}
 function startTalk(id){talking=id;watch=null;$('#conversation').hidden=false;$('#speaker').textContent=NPCS[id].name+(id==='sister'?' '+state.surname:'')+' · '+NPCS[id].role;const greetings={boss:'What is it? We have orders to finish, and Thomas hasn’t even sent word.',coworker:'What can I help you with? I can spare a minute.',librarian:'How may I assist you? Please keep your voice low.',sister:'What is it? I’m sorry. My head is still pounding.',passer:'Need directions? I’m due across town.'};setExchange('',greetings[id]);}
 function setExchange(you,npc){$('#exchange').innerHTML=(you?`<p class="you">You: ${escapeHTML(you)}</p>`:'')+`<p>${escapeHTML(npc)}</p>`;}
@@ -216,10 +218,15 @@ window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(
 function resize(){const ratio=Math.min(devicePixelRatio||1,1.5),w=Math.round(innerWidth*ratio),h=Math.round(innerHeight*ratio);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}}
 function cast(angle){const p=state.player,dx=Math.cos(angle),dy=Math.sin(angle);let mx=Math.floor(p.x),my=Math.floor(p.y),ddx=Math.abs(1/dx),ddy=Math.abs(1/dy),sx=dx<0?-1:1,sy=dy<0?-1:1,sdx=(dx<0?p.x-mx:mx+1-p.x)*ddx,sdy=(dy<0?p.y-my:my+1-p.y)*ddy,side=0,d=0,type=1;for(let i=0;i<90;i++){if(sdx<sdy){sdx+=ddx;mx+=sx;side=0;d=sdx-ddx;}else{sdy+=ddy;my+=sy;side=1;d=sdy-ddy;}type=grid[my]?.[mx]||0;if(type)break;if(mx<0||my<0||mx>=W||my>=H)break;}const hit=side?p.x+d*dx:p.y+d*dy;return{d:Math.max(.05,d),side,type,u:hit-Math.floor(hit),x:mx,y:my};}
 const COLORS={1:[68,83,79],2:[146,121,96],3:[147,139,111],4:[116,139,131],5:[64,77,79],6:[96,72,52]};
-function renderWorld(t){resize();const w=canvas.width,h=canvas.height,p=state.player,B=state.style==='B',outside=atLocation()==='street',night=state.minutes<6*60||state.minutes>20*60;let horizon=h*(.46+(p.pitch||0))+(p.crouch?h*.08:0)+Math.sin(walkBob)*h*.008-jump*h*.07;if(rest)horizon+=Math.min(rest.anim,1)*h*.2;
+function renderWorld(t){resize();const w=canvas.width,h=canvas.height,p=state.player,B=state.style==='B',outside=atLocation()==='street',night=state.minutes<6*60||state.minutes>20*60;
+const targetHeight=p.crouch?CAMERA.crouching:CAMERA.standing;cameraHeight+=(targetHeight-cameraHeight)*(1-Math.exp(-12*dt));
+frameEyeHeight=rest?Math.max(.35,cameraHeight-Math.min(rest.anim,1)*.85):cameraHeight+Math.sin(jump*Math.PI)*.18;
+p.pitch=Math.max(-CAMERA.maxPitch,Math.min(CAMERA.maxPitch,Number.isFinite(p.pitch)?p.pitch:0));
+let horizon=h*.5+Math.tan(p.pitch)*w/(2*Math.tan(FOV/2))+Math.sin(walkBob)*h*.008;
+frameHorizon=horizon;frameProjection=w/(2*Math.tan(FOV/2));
 let sky=ctx.createLinearGradient(0,0,0,horizon);sky.addColorStop(0,outside?(night?'#0c1723':'#769b9e'):'#303d3e');sky.addColorStop(1,outside?(night?'#31404a':'#c4c4ac'):'#7a7b69');ctx.fillStyle=sky;ctx.fillRect(0,0,w,horizon);const floor=ctx.createLinearGradient(0,horizon,0,h);floor.addColorStop(0,outside?'#73786b':'#6c6557');floor.addColorStop(1,outside?'#35494a':'#30352f');ctx.fillStyle=floor;ctx.fillRect(0,horizon,w,h-horizon);
 const rays=Math.min(400,Math.ceil(w/3)),step=w/rays,proj=w/(2*Math.tan(FOV/2));depth=[];
-for(let i=0;i<rays;i++){const a=p.a+Math.atan((i/rays-.5)*2*Math.tan(FOV/2)),r=cast(a),d=r.d*Math.cos(a-p.a);depth[i]=d;const height=Math.min(h*8,proj*1.55/d),top=horizon-height*.54,bottom=top+height,color=COLORS[r.type]||COLORS[1],fog=Math.max(.18,1-d/27)*(r.side?.78:1)*(night?.46:1);let light=1;if(B){light=1+(r.u-.5)*.12;if(r.type<=4){if(Math.abs((r.u*4)%1)<.035)light*=.7;const row=(r.x+r.y)%3;if(row===0&&r.u>.15&&r.u<.76){ctx.fillStyle=`rgb(${color.map(v=>Math.floor(v*fog*.9)).join(',')})`;ctx.fillRect(i*step,top,step+1,height);ctx.fillStyle='#142b2e';ctx.fillRect(i*step,top+height*.2,step+1,height*.32);ctx.fillStyle='#c2b394';ctx.fillRect(i*step,top+height*.51,step+1,height*.025);ctx.fillStyle=`rgb(${color.map(v=>Math.floor(v*fog*.8)).join(',')})`;ctx.fillRect(i*step,bottom-height*.14,step+1,height*.08);continue;}}}
+for(let i=0;i<rays;i++){const a=p.a+Math.atan((i/rays-.5)*2*Math.tan(FOV/2)),r=cast(a),d=r.d*Math.cos(a-p.a);depth[i]=d;const height=proj*CAMERA.wall/d,bottom=horizon+frameEyeHeight*proj/d,top=bottom-height,color=COLORS[r.type]||COLORS[1],fog=Math.max(.18,1-d/27)*(r.side?.78:1)*(night?.46:1);let light=1;if(B){light=1+(r.u-.5)*.12;if(r.type<=4){if(Math.abs((r.u*4)%1)<.035)light*=.7;const row=(r.x+r.y)%3;if(row===0&&r.u>.15&&r.u<.76){ctx.fillStyle=`rgb(${color.map(v=>Math.floor(v*fog*.9)).join(',')})`;ctx.fillRect(i*step,top,step+1,height);ctx.fillStyle='#142b2e';ctx.fillRect(i*step,top+height*.2,step+1,height*.32);ctx.fillStyle='#c2b394';ctx.fillRect(i*step,top+height*.51,step+1,height*.025);ctx.fillStyle=`rgb(${color.map(v=>Math.floor(v*fog*.8)).join(',')})`;ctx.fillRect(i*step,bottom-height*.14,step+1,height*.08);continue;}}}
 ctx.fillStyle=`rgb(${color.map(v=>Math.floor(v*fog*light)).join(',')})`;ctx.fillRect(i*step,top,step+1,height);
 ctx.fillStyle=`rgba(20,28,25,${B?.38:.25})`;ctx.fillRect(i*step,bottom-height*.12,step+1,height*.04);ctx.fillRect(i*step,top+height*.045,step+1,height*.028);
 if(r.type===5){ctx.fillStyle='#202f30';ctx.fillRect(i*step,top+height*.2,step+1,height*.45);if(r.u>.35&&r.u<.65){ctx.fillStyle='#82948b';ctx.fillRect(i*step,top+height*.29,step+1,height*.2);}}
@@ -234,7 +241,7 @@ for(const sign of [{x:9.3,y:6.9,text:'PRINT WORKS'},{x:16.5,y:7.1,text:'LIBRARY'
 // Held weapon and hands make the camera position legible.
 if(!rest){ctx.save();ctx.translate(w*.64+Math.sin(walkBob)*5,h*1.02-attack*h*.14);ctx.rotate(-.45+attack*.6);if(state.equipped){drawObject(ctx,state.equipped,h*.47,0,B);}else{ctx.fillStyle='#947e65';ctx.beginPath();ctx.roundRect(0,-h*.18,h*.065,h*.25,10);ctx.fill();ctx.fillStyle='#353f3d';ctx.fillRect(-h*.009,-h*.02,h*.08,h*.17);}ctx.restore();}
 if(B){const vignette=ctx.createRadialGradient(w/2,h/2,h*.1,w/2,h/2,w*.7);vignette.addColorStop(0,'#0000');vignette.addColorStop(1,'#06131866');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);}if(rest){ctx.fillStyle=`rgba(4,12,18,${Math.min(.9,rest.anim*.7)})`;ctx.fillRect(0,0,w,h);ctx.fillStyle='#d1c7ae';ctx.textAlign='center';ctx.font='17px Georgia';ctx.fillText(rest.anim<1?(rest.bed?'Settling into bed…':'Laying out your sleeping bag…'):'Resting · '+Math.ceil(rest.left/60)+' hours remaining',w/2,h*.43);ctx.font='11px system-ui';ctx.fillText('The town continues around you.',w/2,h*.49);}}
-function screenPoint(x,y,z,proj,horizon){const p=state.player,dx=x-p.x,dy=y-p.y,d=dx*Math.cos(p.a)+dy*Math.sin(p.a);if(d<=.05)return null;return{x:canvas.width/2+(-dx*Math.sin(p.a)+dy*Math.cos(p.a))*proj/d,y:horizon+(.71-z)*proj/d,depth:d};}
+function screenPoint(x,y,z,proj,horizon){const p=state.player,dx=x-p.x,dy=y-p.y,d=dx*Math.cos(p.a)+dy*Math.sin(p.a);if(d<=.05)return null;return{x:canvas.width/2+(-dx*Math.sin(p.a)+dy*Math.cos(p.a))*proj/d,y:horizon+(frameEyeHeight-z)*proj/d,depth:d};}
 function drawPerson(g,x,y,s,id,B,t){g.save();g.translate(x,y);const walking=id==='passer'?Math.sin(t*3)*s*.025:0;const female=['boss','librarian','sister'].includes(id),coat={boss:'#626d65',coworker:'#6e7977',librarian:'#716b58',sister:'#718e85',passer:'#795e49'}[id];g.fillStyle=coat;if(B){const grad=g.createLinearGradient(-s*.2,0,s*.3,0);grad.addColorStop(0,'#303b3a');grad.addColorStop(.5,coat);grad.addColorStop(1,'#222d2d');g.fillStyle=grad;}
 g.beginPath();g.moveTo(-s*.2,-s*1.1);g.lineTo(s*.2,-s*1.1);g.lineTo(s*.28,-s*(female?.35:.45));g.lineTo(-s*.27,-s*(female?.35:.45));g.closePath();g.fill();g.fillStyle='#303b39';g.fillRect(-s*.18,-s*.45+walking,s*.14,s*.45);g.fillRect(s*.04,-s*.45-walking,s*.14,s*.45);g.fillStyle='#a68d71';g.beginPath();if(B)g.ellipse(0,-s*1.27,s*.125,s*.17,0,0,7);else{g.moveTo(-s*.13,-s*1.41);g.lineTo(s*.12,-s*1.42);g.lineTo(s*.14,-s*1.2);g.lineTo(0,-s*1.12);g.lineTo(-s*.14,-s*1.22);}g.fill();g.fillStyle=id==='sister'?'#493b2c':'#383d33';g.fillRect(-s*.14,-s*1.45,s*.28,s*.07);if(id==='passer'||id==='coworker')g.fillRect(-s*.19,-s*1.41,s*.36,s*.04);g.strokeStyle='#b2a58b';g.lineWidth=s*.016;g.beginPath();g.moveTo(0,-s*1.1);g.lineTo(-s*.05,-s*.85);g.lineTo(s*.03,-s*.65);g.stroke();g.fillStyle='#a08b71';g.fillRect(-s*.27,-s*.7,s*.07,s*.22);g.fillRect(s*.21,-s*.7,s*.07,s*.22);if(B){g.fillStyle='#253333';g.fillRect(-s*.08,-s*1.29,s*.035,s*.025);g.fillRect(s*.05,-s*1.29,s*.035,s*.025);}g.restore();}
 function drawObject(g,id,size,angle=0,B=false){const d=ITEMS[id];g.save();g.rotate(angle);g.scale(size,size);g.lineCap='round';g.lineJoin='round';g.fillStyle=d.color;g.strokeStyle=d.color;g.lineWidth=.075;const shape=d.shape;
@@ -264,14 +271,15 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
 'use strict';
 // Touch, keyboard, and inspection refinements. Kept separate from world simulation.
 (() => {
-  const BUILD = '0.2.2';
-  const defaults = { look: 1, move: 1, invertY: false, bob: true };
-  let joystickPointer = null, selectedWorld = null, selectedUntil = 0;
+  const BUILD = '0.2.3';
+  const defaults = { look: 1, verticalLook: 1.2, move: 1, invertY: false, bob: true };
+  let joystickPointer = null, duckPointer = null, selectedWorld = null, selectedUntil = 0;
   let tilt = -.12, gesture = null;
   function preferences() {
     const c = state.controls || {};
     state.controls = {
       look: Number.isFinite(c.look) ? Math.max(.4, Math.min(1.8, c.look)) : 1,
+      verticalLook: Number.isFinite(c.verticalLook) ? Math.max(.4, Math.min(1.8, c.verticalLook)) : 1.2,
       move: Number.isFinite(c.move) ? Math.max(.5, Math.min(1.5, c.move)) : 1,
       invertY: c.invertY === true,
       bob: c.bob !== false
@@ -285,10 +293,12 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
     joystickPointer = null;
     $('#stick').style.transform = '';
     clearTimeout(duckHold);
+    if(duckPointer!==null&&$('#duckButton').hasPointerCapture(duckPointer))$('#duckButton').releasePointerCapture(duckPointer);
+    duckPointer=null;
   }
   // Old build saves retain schema 1. Missing control settings receive defaults.
   const originalLoad = loadSave;
-  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null; updateLayout(); };
+  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null;cameraHeight=state.player.crouch?CAMERA.crouching:CAMERA.standing;state.player.pitch=Math.max(-CAMERA.maxPitch,Math.min(CAMERA.maxPitch,Number.isFinite(state.player.pitch)?state.player.pitch:0));updateLayout(); };
   Haematha.load = loadSave;
   const originalClose = closeAll;
   closeAll = function() { releaseInputs(); originalClose(); updateLayout(); };
@@ -386,7 +396,8 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
     const c = preferences(), section = document.createElement('section');
     section.className = 'card touch-settings';
     section.innerHTML = `<h3>Touch & camera · build ${BUILD}</h3>
-      <label>Look sensitivity <output id="lookValue">${c.look.toFixed(1)}</output><input id="lookSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.look}"></label>
+      <label>Horizontal look <output id="lookValue">${c.look.toFixed(1)}</output><input id="lookSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.look}"></label>
+      <label>Vertical look <output id="verticalValue">${c.verticalLook.toFixed(1)}</output><input id="verticalSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.verticalLook}"></label>
       <label>Joystick response <output id="moveValue">${c.move.toFixed(1)}</output><input id="moveSensitivity" type="range" min="0.5" max="1.5" step="0.1" value="${c.move}"></label>
       <label><input id="invertLook" type="checkbox" ${c.invertY?'checked':''}> Invert vertical look</label>
       <label><input id="cameraBob" type="checkbox" ${c.bob?'checked':''}> Walking camera motion</label>
@@ -394,6 +405,7 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
       <p class="muted">Settings travel with your save. The interface is embedded in this build’s main page.</p>`;
     $('#panelBody').prepend(section);
     $('#lookSensitivity').oninput = e => { state.controls.look = +e.target.value; $('#lookValue').value = state.controls.look.toFixed(1); };
+    $('#verticalSensitivity').oninput = e => { state.controls.verticalLook = +e.target.value; $('#verticalValue').value = state.controls.verticalLook.toFixed(1); };
     $('#moveSensitivity').oninput = e => { state.controls.move = +e.target.value; $('#moveValue').value = state.controls.move.toFixed(1); };
     $('#invertLook').onchange = e => state.controls.invertY = e.target.checked;
     $('#cameraBob').onchange = e => { state.controls.bob = e.target.checked; if (!e.target.checked) walkBob = 0; };
@@ -428,11 +440,25 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
     // Normalize against the short screen edge; portrait and landscape have comparable response.
     const unit=1/Math.min(innerWidth,innerHeight);
     state.player.a+=dx*unit*2.15*c.look;
-    state.player.pitch=Math.max(-.26,Math.min(.26,(state.player.pitch||0)-dy*unit*.5*c.look*(c.invertY?-1:1)));
+    state.player.pitch=Math.max(-CAMERA.maxPitch,Math.min(CAMERA.maxPitch,(state.player.pitch||0)-dy*unit*2.15*c.verticalLook*(c.invertY?-1:1)));
     look.moved+=Math.hypot(dx,dy);look.x=e.clientX;look.y=e.clientY;
   };
   canvas.onpointerup=e=>{if(!look||look.id!==e.pointerId)return;const moved=look.moved;look=null;if(moved<10)worldTap(e);};
   canvas.onpointercancel=canvas.onlostpointercapture=e=>{if(look?.id===e.pointerId)look=null;};
+  $('#duckButton').onpointerdown=e=>{
+    if(paused()||rest||talking||duckPointer!==null)return;
+    e.preventDefault();duckPointer=e.pointerId;ignoreDuck=false;$('#duckButton').setPointerCapture(e.pointerId);
+    duckHold=setTimeout(()=>{ignoreDuck=true;timeDialog('watch');},550);
+  };
+  $('#duckButton').onpointerup=e=>{
+    if(e.pointerId!==duckPointer)return;
+    e.preventDefault();clearTimeout(duckHold);duckPointer=null;
+    if(ignoreDuck||paused()||rest||talking)return;
+    if(watch){watch=null;toast('You stop watching.');}
+    else state.player.crouch=!state.player.crouch;
+    updateHUD();
+  };
+  $('#duckButton').onpointercancel=$('#duckButton').onlostpointercapture=e=>{if(e.pointerId===duckPointer){clearTimeout(duckHold);duckPointer=null;}};
   // A single tap selects an object; the existing interaction button is a second way to inspect it.
   const originalTap=worldTap;
   worldTap=function(e){
@@ -442,7 +468,7 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
     originalTap(e);
     if(hit&&!hit.npc&&$('#inspect').hidden)toast(ITEMS[hit.id].name+' · tap ◇ to inspect, or triple tap the object');
   };
-  function selectedTarget(){return selectedWorld&&performance.now()<selectedUntil?projected.find(p=>p.id===selectedWorld&&!p.npc&&p.distance<3.2):null;}
+  function selectedTarget(){return selectedWorld&&performance.now()<selectedUntil?projected.find(p=>p.id===selectedWorld&&!p.npc&&p.distance<3.2&&p.bottom>0&&p.top<canvas.height):null;}
   const originalInteract=interact;
   interact=function(entity){if(paused()||rest)return;originalInteract(entity||selectedTarget()||nearest());};
   const originalHUD=updateHUD;
@@ -454,6 +480,9 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
     $('#weaponLabel').textContent=weapon=== 'wrench'?'WRENCH':weapon==='wood'?'HANDLE':'FISTS';
     $('#attackButton').setAttribute('aria-label','Attack with '+(weapon?ITEMS[weapon].name:'fists'));
     $('#attackButton').title='Attack with '+(weapon?ITEMS[weapon].name:'fists');
+    $('#duckButton small').textContent=state.player.crouch?'STAND':'DUCK';
+    $('#duckButton').setAttribute('aria-pressed',String(state.player.crouch));
+    $('#duckButton').setAttribute('aria-label',state.player.crouch?'Stand up, hold to observe':'Crouch, hold to observe');
     const current=selectedTarget()||nearest();
     $('#interactButton small').textContent=current?(current.npc?'TALK':'INSPECT'):'INTERACT';
     if(selectedTarget())$('#target').textContent=ITEMS[current.id].name+' · ◇ INSPECT';
@@ -550,6 +579,8 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
   }).catch(()=>{});
   Haematha.build=BUILD;
   Haematha.inspection=()=>({angle:inspectAngle,tilt,zoom:inspectZoom,pointers:objectPointers.size});
+  Haematha.camera=()=>({height:frameEyeHeight,standing:CAMERA.standing,crouching:CAMERA.crouching,pitch:state.player.pitch||0,maxPitch:CAMERA.maxPitch});
+  Haematha.project=(x,y,z=0)=>{const p=screenPoint(x,y,z,frameProjection,frameHorizon);return p?{x:p.x*innerWidth/canvas.width,y:p.y*innerHeight/canvas.height,depth:p.depth}:null;};
   updateLayout();
 })();
 

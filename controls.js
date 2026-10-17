@@ -1,14 +1,15 @@
 'use strict';
 // Touch, keyboard, and inspection refinements. Kept separate from world simulation.
 (() => {
-  const BUILD = '0.2.2';
-  const defaults = { look: 1, move: 1, invertY: false, bob: true };
-  let joystickPointer = null, selectedWorld = null, selectedUntil = 0;
+  const BUILD = '0.2.3';
+  const defaults = { look: 1, verticalLook: 1.2, move: 1, invertY: false, bob: true };
+  let joystickPointer = null, duckPointer = null, selectedWorld = null, selectedUntil = 0;
   let tilt = -.12, gesture = null;
   function preferences() {
     const c = state.controls || {};
     state.controls = {
       look: Number.isFinite(c.look) ? Math.max(.4, Math.min(1.8, c.look)) : 1,
+      verticalLook: Number.isFinite(c.verticalLook) ? Math.max(.4, Math.min(1.8, c.verticalLook)) : 1.2,
       move: Number.isFinite(c.move) ? Math.max(.5, Math.min(1.5, c.move)) : 1,
       invertY: c.invertY === true,
       bob: c.bob !== false
@@ -22,10 +23,12 @@
     joystickPointer = null;
     $('#stick').style.transform = '';
     clearTimeout(duckHold);
+    if(duckPointer!==null&&$('#duckButton').hasPointerCapture(duckPointer))$('#duckButton').releasePointerCapture(duckPointer);
+    duckPointer=null;
   }
   // Old build saves retain schema 1. Missing control settings receive defaults.
   const originalLoad = loadSave;
-  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null; updateLayout(); };
+  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null;cameraHeight=state.player.crouch?CAMERA.crouching:CAMERA.standing;state.player.pitch=Math.max(-CAMERA.maxPitch,Math.min(CAMERA.maxPitch,Number.isFinite(state.player.pitch)?state.player.pitch:0));updateLayout(); };
   Haematha.load = loadSave;
   const originalClose = closeAll;
   closeAll = function() { releaseInputs(); originalClose(); updateLayout(); };
@@ -123,7 +126,8 @@
     const c = preferences(), section = document.createElement('section');
     section.className = 'card touch-settings';
     section.innerHTML = `<h3>Touch & camera · build ${BUILD}</h3>
-      <label>Look sensitivity <output id="lookValue">${c.look.toFixed(1)}</output><input id="lookSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.look}"></label>
+      <label>Horizontal look <output id="lookValue">${c.look.toFixed(1)}</output><input id="lookSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.look}"></label>
+      <label>Vertical look <output id="verticalValue">${c.verticalLook.toFixed(1)}</output><input id="verticalSensitivity" type="range" min="0.4" max="1.8" step="0.1" value="${c.verticalLook}"></label>
       <label>Joystick response <output id="moveValue">${c.move.toFixed(1)}</output><input id="moveSensitivity" type="range" min="0.5" max="1.5" step="0.1" value="${c.move}"></label>
       <label><input id="invertLook" type="checkbox" ${c.invertY?'checked':''}> Invert vertical look</label>
       <label><input id="cameraBob" type="checkbox" ${c.bob?'checked':''}> Walking camera motion</label>
@@ -131,6 +135,7 @@
       <p class="muted">Settings travel with your save. The interface is embedded in this build’s main page.</p>`;
     $('#panelBody').prepend(section);
     $('#lookSensitivity').oninput = e => { state.controls.look = +e.target.value; $('#lookValue').value = state.controls.look.toFixed(1); };
+    $('#verticalSensitivity').oninput = e => { state.controls.verticalLook = +e.target.value; $('#verticalValue').value = state.controls.verticalLook.toFixed(1); };
     $('#moveSensitivity').oninput = e => { state.controls.move = +e.target.value; $('#moveValue').value = state.controls.move.toFixed(1); };
     $('#invertLook').onchange = e => state.controls.invertY = e.target.checked;
     $('#cameraBob').onchange = e => { state.controls.bob = e.target.checked; if (!e.target.checked) walkBob = 0; };
@@ -165,11 +170,25 @@
     // Normalize against the short screen edge; portrait and landscape have comparable response.
     const unit=1/Math.min(innerWidth,innerHeight);
     state.player.a+=dx*unit*2.15*c.look;
-    state.player.pitch=Math.max(-.26,Math.min(.26,(state.player.pitch||0)-dy*unit*.5*c.look*(c.invertY?-1:1)));
+    state.player.pitch=Math.max(-CAMERA.maxPitch,Math.min(CAMERA.maxPitch,(state.player.pitch||0)-dy*unit*2.15*c.verticalLook*(c.invertY?-1:1)));
     look.moved+=Math.hypot(dx,dy);look.x=e.clientX;look.y=e.clientY;
   };
   canvas.onpointerup=e=>{if(!look||look.id!==e.pointerId)return;const moved=look.moved;look=null;if(moved<10)worldTap(e);};
   canvas.onpointercancel=canvas.onlostpointercapture=e=>{if(look?.id===e.pointerId)look=null;};
+  $('#duckButton').onpointerdown=e=>{
+    if(paused()||rest||talking||duckPointer!==null)return;
+    e.preventDefault();duckPointer=e.pointerId;ignoreDuck=false;$('#duckButton').setPointerCapture(e.pointerId);
+    duckHold=setTimeout(()=>{ignoreDuck=true;timeDialog('watch');},550);
+  };
+  $('#duckButton').onpointerup=e=>{
+    if(e.pointerId!==duckPointer)return;
+    e.preventDefault();clearTimeout(duckHold);duckPointer=null;
+    if(ignoreDuck||paused()||rest||talking)return;
+    if(watch){watch=null;toast('You stop watching.');}
+    else state.player.crouch=!state.player.crouch;
+    updateHUD();
+  };
+  $('#duckButton').onpointercancel=$('#duckButton').onlostpointercapture=e=>{if(e.pointerId===duckPointer){clearTimeout(duckHold);duckPointer=null;}};
   // A single tap selects an object; the existing interaction button is a second way to inspect it.
   const originalTap=worldTap;
   worldTap=function(e){
@@ -179,7 +198,7 @@
     originalTap(e);
     if(hit&&!hit.npc&&$('#inspect').hidden)toast(ITEMS[hit.id].name+' · tap ◇ to inspect, or triple tap the object');
   };
-  function selectedTarget(){return selectedWorld&&performance.now()<selectedUntil?projected.find(p=>p.id===selectedWorld&&!p.npc&&p.distance<3.2):null;}
+  function selectedTarget(){return selectedWorld&&performance.now()<selectedUntil?projected.find(p=>p.id===selectedWorld&&!p.npc&&p.distance<3.2&&p.bottom>0&&p.top<canvas.height):null;}
   const originalInteract=interact;
   interact=function(entity){if(paused()||rest)return;originalInteract(entity||selectedTarget()||nearest());};
   const originalHUD=updateHUD;
@@ -191,6 +210,9 @@
     $('#weaponLabel').textContent=weapon=== 'wrench'?'WRENCH':weapon==='wood'?'HANDLE':'FISTS';
     $('#attackButton').setAttribute('aria-label','Attack with '+(weapon?ITEMS[weapon].name:'fists'));
     $('#attackButton').title='Attack with '+(weapon?ITEMS[weapon].name:'fists');
+    $('#duckButton small').textContent=state.player.crouch?'STAND':'DUCK';
+    $('#duckButton').setAttribute('aria-pressed',String(state.player.crouch));
+    $('#duckButton').setAttribute('aria-label',state.player.crouch?'Stand up, hold to observe':'Crouch, hold to observe');
     const current=selectedTarget()||nearest();
     $('#interactButton small').textContent=current?(current.npc?'TALK':'INSPECT'):'INTERACT';
     if(selectedTarget())$('#target').textContent=ITEMS[current.id].name+' · ◇ INSPECT';
@@ -287,5 +309,7 @@
   }).catch(()=>{});
   Haematha.build=BUILD;
   Haematha.inspection=()=>({angle:inspectAngle,tilt,zoom:inspectZoom,pointers:objectPointers.size});
+  Haematha.camera=()=>({height:frameEyeHeight,standing:CAMERA.standing,crouching:CAMERA.crouching,pitch:state.player.pitch||0,maxPitch:CAMERA.maxPitch});
+  Haematha.project=(x,y,z=0)=>{const p=screenPoint(x,y,z,frameProjection,frameHorizon);return p?{x:p.x*innerWidth/canvas.width,y:p.y*innerHeight/canvas.height,depth:p.depth}:null;};
   updateLayout();
 })();

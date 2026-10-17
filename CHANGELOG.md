@@ -1,3 +1,12 @@
+# 0.2.3 — Camera height and vertical look
+
+- Raise the standing viewpoint from the NPCs' midsection to their eye level.
+- Give crouching a physical height reduction with a short transition, instead of an offset of the horizon. Label the crouch button STAND while lowered.
+- Match walls, NPCs, and objects to the revised eye-height projection.
+- Expand vertical look to approximately 55 degrees each way and add independent vertical sensitivity.
+- Preserve horizontal look response and saved controls. Older saves receive the vertical default.
+- Keep off-screen floor items from being targeted solely by horizontal alignment.
+
 # 0.2.2 — Equipment and action buttons
 
 - Move equipping into Inventory, removing the misleading inspection action for uncollected weapons.
