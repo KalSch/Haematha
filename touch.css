@@ -1,4 +1,19 @@
 :root{--visible-height:100dvh;--visible-top:0px}
+/* Map, inventory, and the associated menu tabs are a separate opaque screen. */
+#panel.navigation-screen{inset:0;width:100%;height:100dvh;padding:max(16px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));background:#132126;border:0;box-shadow:none;backdrop-filter:none;display:flex;flex-direction:column;overflow:hidden}
+#panel.navigation-screen>.panel-head{padding-left:64px;min-height:46px;flex-shrink:0;margin-bottom:12px}
+#panel.navigation-screen>.tabs{flex-shrink:0;padding-bottom:12px;border-bottom:1px solid var(--line)}
+#panel.navigation-screen>#panelBody{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding-top:8px;padding-bottom:12px}
+#panel.navigation-screen #townMap{max-height:65dvh}
+.map-screen #world,.map-screen #conversation,.map-screen #notes{visibility:hidden}
+.map-screen #hud{z-index:7}
+.map-screen #hud>*{visibility:hidden}
+.map-screen #hud>.left-tools{visibility:visible}
+.map-screen .left-tools>#bagButton{visibility:hidden;pointer-events:none}
+.map-screen #mapButton{visibility:visible;background:#b9a174;color:#182126;border-color:#d5c49b}
+.map-screen #hud>#toast{visibility:visible;top:auto;bottom:max(20px,env(safe-area-inset-bottom))}
+@media(orientation:landscape){#panel.navigation-screen #townMap{max-height:calc(100dvh - 240px - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:100px}}
+@media(orientation:portrait){#panel.navigation-screen>.panel-head h2{font-size:18px}#panel.navigation-screen>.panel-head{gap:8px;flex-wrap:nowrap}#panel.navigation-screen #closePanel{font-size:12px;padding:9px 11px;white-space:nowrap}#panel.navigation-screen #townMap{max-height:42dvh}}
 html,body{width:100%;height:100%;background:#11191b}
 button,a,input,textarea{-webkit-tap-highlight-color:transparent}
 #world{-webkit-user-select:none;user-select:none}

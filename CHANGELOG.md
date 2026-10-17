@@ -1,3 +1,11 @@
+# 0.2.1 — Map screen
+
+- Open the map and its menu tabs on their own opaque full-screen view.
+- Hide the scene and movement controls while the map is open.
+- Keep the same top-left map button available to return to play from any menu tab.
+- Make the M key toggle the map on PC.
+- Preserve player position, camera, and existing saves. Rest and observation prompts keep their existing dialog layout.
+
 # 0.2.0 — Interface and touch revision
 
 - Bundle the full interface and game into `index.html`, preventing the unstyled layout caused by a missing separate stylesheet.

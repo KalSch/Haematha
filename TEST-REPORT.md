@@ -1,10 +1,12 @@
-# Build 0.2.0 verification
+# Build 0.2.1 verification
 
 Date: 2026-10-17
 
 ## Automated result
 
-**59 checks passed: 38 base checks and 21 revision checks. No browser runtime errors recorded.**
+**73 checks passed: 52 base/map checks and 21 touch revision checks. No browser runtime errors recorded.**
+
+Map checks cover a full-viewport opaque screen in landscape and portrait, hidden world/movement controls, paused world time, the same map button returning to play, unchanged player position, M-key toggle, return from other menu tabs, and inventory inspection above the navigation screen. The landscape map screen was visually inspected.
 
 The included `tests/smoke.cjs` ran against a real headless Chromium browser, with an 852 × 393 mobile/touch-emulated viewport and a 393 × 852 portrait viewport. The app was served under `/test-repository/` to exercise GitHub Pages-style repository subpaths.
 

@@ -9,7 +9,7 @@ for (const name of ['app.js', 'controls.js']) {
   const source = fs.readFileSync(path.join(root, name), 'utf8').replace(/<\/script/gi, '<\\/script');
   html = html.replace(`<script src="${name}" defer></script>`, () => `<script data-source="${name}">\n${source}\n</script>`);
 }
-html = html.replace('FIRST SUMMER / BUILD 0.1', 'FIRST SUMMER / BUILD 0.2.0');
+html = html.replace('FIRST SUMMER / BUILD 0.1', 'FIRST SUMMER / BUILD 0.2.1');
 if (html.includes('src="app.js"') || html.includes('href="style.css"')) throw Error('Incomplete bundle');
 fs.writeFileSync(path.join(root, 'index.html'), html);
 console.log('Built index.html: embedded styles, game, and controls.');

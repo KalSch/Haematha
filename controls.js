@@ -1,7 +1,7 @@
 'use strict';
 // Touch, keyboard, and inspection refinements. Kept separate from world simulation.
 (() => {
-  const BUILD = '0.2.0';
+  const BUILD = '0.2.1';
   const defaults = { look: 1, move: 1, invertY: false, bob: true };
   let joystickPointer = null, selectedWorld = null, selectedUntil = 0;
   let tilt = -.12, gesture = null;
@@ -30,8 +30,30 @@
   const originalClose = closeAll;
   closeAll = function() { releaseInputs(); originalClose(); updateLayout(); };
   const originalPanel = openPanel;
-  openPanel = function(which) { releaseInputs(); originalPanel(which); };
+  openPanel = function(which) {
+    releaseInputs(); originalPanel(which);
+    $('#panel').classList.add('navigation-screen');
+    $('#closePanel').onclick = returnFromMap;
+    updateLayout();
+  };
   Haematha.openPanel = openPanel;
+  function returnFromMap() {
+    document.activeElement?.blur();
+    $('#panel').hidden = true;
+    pendingTake = null;
+    releaseInputs(); updateLayout();
+  }
+  function toggleMap() {
+    if (!started) return;
+    if (!$('#panel').hidden && $('#panel').classList.contains('navigation-screen')) returnFromMap();
+    else { $('#inspect').hidden = true; openPanel('map'); }
+  }
+  $('#mapButton').onclick = toggleMap;
+  window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() !== 'm' || ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (!e.repeat) toggleMap();
+  }, true);
   const originalNotes = openNotes;
   openNotes = function(mode) { releaseInputs(); originalNotes(mode); updateLayout(); };
   const originalTalk = startTalk;
@@ -177,6 +199,13 @@
       if(face.texture){g.save();g.clip();const o=project(0,0,thickness/2),u=project(1,0,thickness/2),v=project(0,1,thickness/2);g.transform((u.x-o.x)*size,(u.y-o.y)*size,(v.x-o.x)*size,(v.y-o.y)*size,o.x*size,o.y*size);drawObject(g,id,1,0,true);g.restore();}}
   }
   function updateLayout(){
+    if ($('#panel').hidden) $('#panel').classList.remove('navigation-screen');
+    const navigation = !$('#panel').hidden && $('#panel').classList.contains('navigation-screen');
+    document.body.classList.toggle('map-screen', navigation);
+    $('#mapButton').setAttribute('aria-expanded', String(navigation));
+    $('#mapButton').setAttribute('aria-label', navigation ? 'Return to game' : 'Map and menu');
+    $('#mapButton').title = navigation ? 'Return to game' : 'Map and menu';
+    $('#mapButton').setAttribute('aria-controls', 'panel');
     document.body.classList.toggle('notebook-with-talk',!$('#notes').hidden&&!$('#conversation').hidden);
     const v=window.visualViewport,typing=['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
     document.body.classList.toggle('keyboard-open',!!(v&&typing&&v.height<innerHeight*.78));
