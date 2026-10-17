@@ -10,7 +10,7 @@ async function run(){
  await new Promise(r=>server.listen(port,r));
  browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--single-process','--no-zygote','--disable-webgl']});
  const context=await browser.newContext({viewport:{width:852,height:393},hasTouch:true,isMobile:true}),page=await context.newPage(),errors=[];
- page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>window.Haematha?.build==='0.2.0');
+ page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>window.Haematha?.build==='0.2.3');
  check((await page.evaluate(()=>getComputedStyle(document.querySelector('#hud')).position))==='fixed','controls overlay works without separate style or script files');
  check((await page.evaluate(()=>getComputedStyle(document.body).backgroundColor))==='rgb(17, 25, 27)','embedded stylesheet gives the page its intended background');
  await page.click('#begin');let initial=await page.evaluate(()=>Haematha.getState());
@@ -44,8 +44,8 @@ async function run(){
  after=await page.evaluate(()=>Haematha.inspection());check(after.zoom>before.zoom&&await page.locator('#inspect').isVisible(),'repeated pinches zoom without closing inspection');
  await page.click('#resetObject');after=await page.evaluate(()=>Haematha.inspection());check(after.zoom===1&&after.angle===.3&&after.tilt===-.12,'inspection view can reset');
  await page.mouse.click(x,y,{clickCount:3,delay:90});check(await page.locator('#inspect').isHidden(),'three deliberate taps still close inspection');
- await page.evaluate(s=>Haematha.load(s),initial);await page.waitForTimeout(100);
- const point=await page.evaluate(()=>{const p=Haematha.getState().player,dx=8.2-p.x,dy=5.3-p.y,proj=innerWidth/(2*Math.tan((Math.PI/2.8)/2)),d=dx*Math.cos(p.a)+dy*Math.sin(p.a);return{x:innerWidth/2+(-dx*Math.sin(p.a)+dy*Math.cos(p.a))*proj/d,y:innerHeight*.46+(.71-.45*.48)*proj/d};});
+ await page.evaluate(s=>{s.player.pitch=-.45;Haematha.load(s);},initial);await page.waitForTimeout(100);
+ const point=await page.evaluate(()=>Haematha.project(8.2,5.3,.45*.48));
  await page.mouse.click(point.x,Math.min(point.y,310));check(await page.locator('#inspect').isHidden(),'single tap selects without opening inspection');
  await page.click('#interactButton');check(await page.locator('#inspect').isVisible(),'interaction button inspects the selected object');await page.click('#closeInspect');
  await page.evaluate(()=>{const s=Haematha.getState(),n=s.npcs.find(n=>n.id==='boss');s.player.x=n.x-.9;s.player.y=n.y-.4;s.player.a=Math.atan2(.4,.9);Haematha.load(s);});await page.waitForTimeout(100);await page.keyboard.press('e');await page.fill('#talkInput','What happened to Thomas?');await page.locator('#talkForm button').click();await page.click('#talkNotes');await page.waitForTimeout(60);
@@ -54,7 +54,7 @@ async function run(){
  await page.click('#closeNotes');await page.setViewportSize({width:852,height:393});await page.focus('#talkInput');await page.evaluate(()=>{Object.defineProperty(window.visualViewport,'height',{configurable:true,get:()=>180});window.visualViewport.dispatchEvent(new Event('resize'));});await page.waitForTimeout(50);
  const keyboard=await page.locator('#conversation').boundingBox();check(keyboard.y+keyboard.height<=181,'conversation fits a simulated keyboard-reduced viewport');
  await page.evaluate(()=>{delete window.visualViewport.height;document.activeElement.blur();window.visualViewport.dispatchEvent(new Event('resize'));});await page.click('#endTalk');
- await page.waitForFunction(()=>navigator.serviceWorker.controller);await page.evaluate(()=>Haematha.autoSave('refinement checks'));await context.setOffline(true);await page.reload();await page.waitForFunction(()=>window.Haematha?.build==='0.2.0');await page.click('#resume');
+ await page.waitForFunction(()=>navigator.serviceWorker.controller);await page.evaluate(()=>Haematha.autoSave('refinement checks'));await context.setOffline(true);await page.reload();await page.waitForFunction(()=>window.Haematha?.build==='0.2.3');await page.click('#resume');
  check(await page.locator('#welcome').isHidden()&&(await page.evaluate(()=>getComputedStyle(document.querySelector('#hud')).position))==='fixed','offline resume retains embedded interface with source files missing');
  check(errors.length===0,'no refinement runtime errors: '+errors.join('; '));console.log(`\n${checks} refinement checks passed.`);
 }
