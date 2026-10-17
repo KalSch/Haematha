@@ -1,27 +1,33 @@
 # MARK OF HAEMATHA — First Summer
 
-**Build 0.1 · a playable, offline-capable PWA prototype.**
+**Build 0.2.0 · touch and interface revision · save-compatible with build 0.1.**
+
+The playable page now includes its styles and scripts. A missing separate `style.css` upload no longer breaks the control layout. This revision improves the joystick, simultaneous move/look input, camera settings, object inspection, and the notebook/conversation layout. It keeps the initial sample world and both tentative visual treatments.
 
 A first-person investigation slice for phone, tablet, and PC. Start at the print works after a coworker misses a shift. Explore Ash Street, question people, inspect the blood and the letter, visit your sister, and experiment at the library workbench.
 
-This is a working interface and simulation foundation, not the full game. It has no external runtime dependencies, accounts, server, API key, telemetry, or build step.
+This is a working interface and simulation foundation, not the full game. It has no external runtime dependencies, accounts, server, API key, or telemetry. A prebuilt `index.html` is included; no build step is required to upload or play.
 
 ## Put it on GitHub Pages
 
-1. Extract `mark-of-haematha-pwa.zip`.
-2. Create a GitHub repository. Upload the **contents of the `mark-of-haematha` folder** into its root. `index.html`, `app.js`, `style.css`, `sw.js`, and `manifest.webmanifest` must sit together; keep the `icons` directory intact. Uploading the ZIP alone will not run the game.
+1. Extract `mark-of-haematha-v0.2.0-pwa.zip`.
+2. Upload the **contents of the `mark-of-haematha-v0.2.0` folder** to the existing repository root, replacing the previous build's matching files. For playing/installing, the required upload is `index.html`, `sw.js`, `manifest.webmanifest`, and the `icons` directory. All other files are editable sources, documentation, or developer tests. Uploading the ZIP alone will not run the game.
 3. In the repository, open **Settings → Pages**. Under deployment, choose **Deploy from a branch**, then your `main` branch and **/(root)**. Save.
 4. Open the Pages address GitHub provides once deployment finishes. Repository subpaths are supported; no source edits are needed.
 5. On iPhone, open that address in Safari, use **Share → Add to Home Screen**, then launch the icon. Let the first online load finish before testing offline. Landscape is recommended; iOS may not enforce the manifest's landscape preference.
 
 If uploading folders from an iPhone is awkward, use your preferred GitHub editor or development environment to unpack the ZIP into the repository, rather than trying to run it from the Files app. All source files are plain text. Pages needs HTTPS; opening `index.html` directly cannot install the PWA or cache it offline.
 
+When replacing build 0.1, wait for Pages deployment to finish, close every open game tab and Home Screen game window, then reopen online. The startup page and Settings identify **0.2.0**. Existing saves use the same storage key and schema; export a backup from the old build before updating if you have progress worth keeping. No deletion of website data is required.
+
+For later updates, an available **Save & update** button activates a waiting build. Opening the game online also checks the page for a newer version. A build already controlled by the old 0.1 worker may need the one-time close/reopen described above.
+
 ## What works
 
-- Lightweight first-person exploration with collision, touch joystick, drag to look, jump, and crouch.
+- Lightweight first-person exploration with collision, a joystick dead zone, simultaneous two-thumb move/look, jump, and crouch. Settings include look sensitivity, joystick response, inverted vertical look, camera leveling, and optional walking motion.
 - A fixed print works, street, home, and library/workshop in a fictional test town.
 - Five named NPCs with sample histories, relationship scores, local conversation rules, and limited schedules. Ask naturally about Thomas, blood, the library, your sister, or help. Only the current exchange is shown.
-- Fullscreen object inspection with turn/zoom controls, take/equip/use actions, and clues you can read.
+- Fullscreen object inspection with extruded placeholder models that turn and tilt, flip/reset buttons, pinch/scroll/button zoom, take/equip/use actions, and clues you can read. A single tap selects an object for the interaction button; triple-tap inspection remains available.
 - Ten-cell shaped backpack and four pockets, with manual placement, relocation, dropping, and pocket-size restrictions.
 - Personal notes and a self-authored checklist. Opening the notebook pauses the world and preserves the current conversation.
 - Date/time, fatigue, rest, bed recovery, map travel by foot or by motorcar if you find its keys, and observation time acceleration.
@@ -31,7 +37,7 @@ If uploading folders from an iPhone is awkward, use your preferred GitHub editor
 
 ## Prototype limits — important
 
-This uses a **Canvas raycast renderer with billboard figures and objects**, rather than a full polygonal 3D engine. It lets us test navigation and control layout with a very small download. The A/B toggle tests atmosphere and readability; it is **not** a reliable performance or art-quality comparison of the previously discussed final A/B styles. Inspection turn/zoom is also a simplified projected illustration. Final visual direction remains undecided.
+The world uses a **Canvas raycast renderer with billboard figures and objects**. It lets us test navigation and control layout with a small download. The inspection viewer now uses simple extruded models, projected in software, with approximate face detail. These are functional placeholders rather than final object assets. The A/B toggle tests atmosphere and readability; it is **not** a reliable performance or art-quality comparison of the previously discussed final A/B styles. Final visual direction remains undecided.
 
 NPCs use authored sample data and intent rules. They do **not** use the Life Engine or live generative conversation yet. Broadly phrased questions work within the supported topics, but arbitrary requests may receive a clarification. No generated population, player-state selection, evolving town-wide infection, vampire combat/capture, final story outcomes, full ancestry, opening movie, audio, or worldwide travel is implemented here. Sister symptoms are sample dialogue, not a completed Hunger simulation. No canon for the Founders or rune designs is replaced by this build. The app icon is a temporary H monogram.
 
@@ -45,8 +51,9 @@ The workshop accepts supported recipes; it does not reason about arbitrary inven
 | Look | Drag the scene | Drag mouse; Left/Right arrows turn |
 | Talk | Tap a nearby person | Aim, then E |
 | Interact | Right ◇ button | E |
-| Inspect | Triple tap a nearby object | Aim, then F |
-| Turn / zoom inspected item | Drag / pinch | Drag / scroll |
+| Inspect | Triple tap, or tap item then ◇ | Aim, then F or E |
+| Turn / tilt / zoom inspected item | Drag / pinch or +/− | Drag / scroll or +/− |
+| Flip / reset inspected item | FLIP / RESET VIEW | Same buttons |
 | Exit inspection or conversation | Triple tap blank area, or close button | Escape |
 | Attack | ✦ button | X |
 | Jump | ↑ button | Space |
@@ -74,7 +81,7 @@ Browser storage is local to the exact site origin and this app's storage key. It
 
 A save restores the player, time, NPC positions, clue flags, notes/tasks, relationships, objects, inventory, and workshop work. Autosaves happen on arrival, collection, notebook close, construction start, approximately every 90 active seconds, and when the app backgrounds. There is no autosave before every action.
 
-For an app update, change the `CACHE` name in `sw.js` (for example to `haematha-shell-0.1.1`) along with the changed files. A waiting worker takes over after all old game tabs/windows close. Reopen online, allow installation, then test offline. Do not delete user save data just to refresh the app cache.
+For an app update, change the version suffix of `CACHE` in `sw.js`, rebuild `index.html` if the sources changed, and upload the files together. Caches are scoped to this installation path. The service worker uses online navigation when available and a cached page offline. Required offline caching depends only on the self-contained page; missing development files cannot prevent it. Do not delete user save data just to refresh the app cache.
 
 ## Local development
 
@@ -86,22 +93,28 @@ python3 -m http.server 8080
 
 Open `http://localhost:8080`. No package installation is required to play. A phone cannot reach another computer through `localhost`; use the HTTPS Pages address for the simplest device test.
 
+For source edits, modify `index.template.html`, `style.css`, `touch.css`, `app.js`, or `controls.js`, then run `node build.cjs`. It generates the upload-ready `index.html` using only Node's standard library. Editing an external style/script file without rebuilding will not change the bundled game.
+
 For the optional automated checks, install Playwright outside the game or in a development checkout and install its Chromium browser:
 
 ```sh
 npm install --no-save playwright
 npx playwright install chromium
 node tests/smoke.cjs
+node tests/refinements.cjs
 ```
 
 The script starts a local server itself. Set `PLAYWRIGHT_MODULE`, `CHROMIUM_PATH`, or `TEST_PORT` if your test environment needs custom locations. These are test dependencies only and do not need uploading to Pages. Do not upload `node_modules`.
 
 ## Files and next integration points
 
-- `index.html`, `style.css`: responsive controls, menus, overlays, accessibility labels.
+- `index.html`: self-contained prebuilt playable page.
+- `index.template.html`, `style.css`, `touch.css`, `build.cjs`: interface sources and bundler.
 - `app.js`: local world state, simulation clock, NPC sample schedules and conversations, raycast scene, inventory, workshop, saves. `window.Haematha` exposes a small diagnostic interface for tests and future integration.
+- `controls.js`: input refinements, viewport handling, inspection projection, and update prompt.
 - `sw.js`, `manifest.webmanifest`, `icons/`: install/offline shell.
 - `tests/smoke.cjs`: browser interaction, state restoration, packing, recipe, and offline checks.
+- `tests/refinements.cjs`: missing-upload regression, two-thumb input, inspection gestures, control settings, legacy saves, and conversation layout.
 - `TEST-REPORT.md`: validation performed for this build.
 
 Next engineering milestones are separating the simulation from rendering, connecting Life Engine history and schedules, adding Thrall/Hunger state progression and Maker relationships, replacing the sample renderer for a true A/B scene comparison if desired, and implementing hostile encounter behavior. Keep generated worlds and immutable lore in separate data modules as those systems arrive.

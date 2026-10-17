@@ -1,12 +1,16 @@
-# Build 0.1 verification
+# Build 0.2.0 verification
 
 Date: 2026-10-17
 
 ## Automated result
 
-**38 checks passed; no browser runtime errors recorded.**
+**59 checks passed: 38 base checks and 21 revision checks. No browser runtime errors recorded.**
 
 The included `tests/smoke.cjs` ran against a real headless Chromium browser, with an 852 × 393 mobile/touch-emulated viewport and a 393 × 852 portrait viewport. The app was served under `/test-repository/` to exercise GitHub Pages-style repository subpaths.
+
+The additional `tests/refinements.cjs` ran under `/revision/` with separate `style.css`, `touch.css`, `app.js`, and `controls.js` requests deliberately returning 404. The self-contained game still rendered its interface and resumed offline. Two simultaneous touch contacts were dispatched through the browser's touch-input API. Keyboard layout was checked using a simulated reduction of Visual Viewport height; this is not a physical iOS keyboard test.
+
+Revision checks verified joystick dead zone, simultaneous move/look, stopping on release, stored control preferences, camera leveling, old-save control defaults, inspection flip/tilt/reset, repeated pinches without accidental close, deliberate triple-tap close, tap-then-interact inspection, nonoverlapping notebook and current exchange in both orientations, keyboard-reduced conversation bounds, and styled offline resume with separate source files unavailable.
 
 Verified:
 
@@ -25,7 +29,7 @@ Verified:
 - Actual network-offline page reload, offline shell availability, and resuming stored progress.
 - Relative PWA manifest paths, portrait inventory visibility, and absence of document-width overflow.
 
-JavaScript syntax checks passed for `app.js` and `sw.js`. App and settings screenshots were visually inspected. The distribution ZIP was checked for archive integrity and required files.
+JavaScript syntax checks passed for `app.js`, `controls.js`, `build.cjs`, and `sw.js`. The generated page has embedded styles and scripts. Front and back inspection views and notebook/conversation layout were visually inspected. QA screenshots are internal and are not included in the release archive. The distribution ZIP was checked for archive integrity and required files.
 
 ## Device testing still required
 

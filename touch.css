@@ -1,0 +1,47 @@
+:root{--visible-height:100dvh;--visible-top:0px}
+html,body{width:100%;height:100%;background:#11191b}
+button,a,input,textarea{-webkit-tap-highlight-color:transparent}
+#world{-webkit-user-select:none;user-select:none}
+#joystick{bottom:calc(24px + env(safe-area-inset-bottom));left:calc(24px + env(safe-area-inset-left))}
+#actions{bottom:calc(22px + env(safe-area-inset-bottom));right:calc(22px + env(safe-area-inset-right))}
+#vitals{bottom:calc(23px + env(safe-area-inset-bottom))}
+#clock{top:max(16px,env(safe-area-inset-top));line-height:1.6}
+#clock small{font-size:9px}
+#talkInput,#notes textarea,#notes form input,#saveName,#playerName,#familyName{font-size:16px}
+#conversation{display:flex;flex-direction:column;max-height:70dvh}
+#exchange{flex:1;min-height:80px}
+#talkForm{flex-shrink:0}
+#objectInfo{max-height:58%;overflow:auto;padding-right:3px}
+#inspect header{padding-top:env(safe-area-inset-top)}
+#inspect footer{bottom:max(16px,env(safe-area-inset-bottom));font-size:11px}
+#inspect footer button{padding:7px 13px;min-height:40px;touch-action:manipulation}
+#inspect footer p{margin:6px 0 0}
+.touch-settings{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.touch-settings h3,.touch-settings .row,.touch-settings p{grid-column:1/-1}
+.touch-settings label{margin:0}
+.touch-settings input[type=range]{display:block;width:100%;margin:8px 0;accent-color:#c1a578}
+.touch-settings output{float:right;font:13px system-ui;color:#d7bc86}
+.touch-settings input[type=checkbox]{min-width:18px;min-height:18px;vertical-align:middle}
+.notebook-with-talk #conversation{left:3%;width:42%;top:17%}
+.notebook-with-talk #notes{left:48%;right:3%;top:9%;bottom:8%}
+.notebook-with-talk .conversation-head{flex-wrap:wrap}
+.notebook-with-talk .conversation-head span{flex-basis:100%}
+.keyboard-open #conversation{top:calc(var(--visible-top) + 8px);bottom:auto;max-height:calc(var(--visible-height) - 16px);width:min(720px,94%);left:3%;padding:10px}
+.keyboard-open #exchange{min-height:28px;max-height:none;margin:5px 0;font-size:14px}
+.keyboard-open #conversation>small{display:none}
+.keyboard-open .conversation-head{font-size:10px}
+.keyboard-open #notes{top:calc(var(--visible-top) + 8px);bottom:auto;max-height:calc(var(--visible-height) - 16px)}
+.keyboard-open #notes textarea{height:calc(var(--visible-height) - 155px);min-height:60px}
+#updateNotice{position:fixed;z-index:20;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#15262bf5;border:1px solid #bba276;padding:10px 14px;display:flex;gap:16px;align-items:center;box-shadow:0 4px 30px #0008;font:12px system-ui;max-width:94%}
+@media(orientation:portrait){
+ #vitals{bottom:calc(163px + env(safe-area-inset-bottom))}
+ #objectView{height:40%;top:13%}
+ #objectInfo{top:54%;max-height:27%;font-size:13px}
+ #inspect footer{left:5%;right:5%;bottom:max(15px,env(safe-area-inset-bottom))}
+ #inspect footer p{font-size:10px}
+ .notebook-with-talk #conversation{left:3%;top:11%;width:94%;height:24dvh;max-height:24dvh}
+ .notebook-with-talk #conversation #talkForm,.notebook-with-talk #conversation>small{display:none}
+ .notebook-with-talk #conversation #exchange{min-height:15px;margin:5px 0;max-height:none}
+ .notebook-with-talk #notes{left:3%;right:3%;top:37%;bottom:3%}
+ .touch-settings{grid-template-columns:1fr}
+}
