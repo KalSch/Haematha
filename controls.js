@@ -1,7 +1,7 @@
 'use strict';
 // Touch, keyboard, and inspection refinements. Kept separate from world simulation.
 (() => {
-  const BUILD = '0.2.1';
+  const BUILD = '0.2.2';
   const defaults = { look: 1, move: 1, invertY: false, bob: true };
   let joystickPointer = null, selectedWorld = null, selectedUntil = 0;
   let tilt = -.12, gesture = null;
@@ -25,7 +25,7 @@
   }
   // Old build saves retain schema 1. Missing control settings receive defaults.
   const originalLoad = loadSave;
-  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; updateLayout(); };
+  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null; updateLayout(); };
   Haematha.load = loadSave;
   const originalClose = closeAll;
   closeAll = function() { releaseInputs(); originalClose(); updateLayout(); };
@@ -66,8 +66,57 @@
   openInspect = function(id) {
     releaseInputs(); objectPointers.clear(); objectTap = []; gesture = null; tilt = -.12;
     originalInspect(id);
+    // Equipment is chosen in inventory, after the item has actually been collected.
+    $('#equipItem')?.remove();
+    if (ITEMS[id].power) {
+      $('#useItem')?.remove();
+      const hint = document.createElement('p'); hint.className = 'muted';
+      hint.textContent = state.inventory.some(i=>i.id===id) ? 'Equip this item from Inventory.' : 'Take this item, then equip it from Inventory.';
+      $('#objectInfo').append(hint);
+    }
   };
   Haematha.openInspect = openInspect;
+  const originalInventory = inventoryPanel;
+  inventoryPanel = function() {
+    originalInventory();
+    const name = state.equipped ? ITEMS[state.equipped].name : 'Fists';
+    const slot = document.createElement('section'); slot.id='equippedSlot'; slot.className='equipment-slot';
+    const caption=document.createElement('div');
+    const label=document.createElement('small'); label.textContent='CURRENTLY EQUIPPED';
+    const value=document.createElement('strong'); value.textContent=name;
+    caption.append(label,value);slot.append(caption);
+    if(state.equipped){const b=document.createElement('button');b.id='unequipCurrent';b.textContent='Unequip';b.onclick=()=>equip(state.equipped);slot.append(b);}
+    $('#panelBody').prepend(slot);
+    if(selectedItem && state.inventory.includes(selectedItem) && ITEMS[selectedItem.id].power){
+      const active=state.equipped===selectedItem.id;
+      $('#invEquip').textContent=active?'Unequip':'Equip';
+      $('#invEquip').setAttribute('aria-pressed',String(active));
+      const status=document.createElement('p');status.id='equipmentStatus';status.className=active?'equipment-status':'muted';
+      status.textContent=active?'Equipped — ready on the Attack button.':'Carried — select Equip to ready this item.';
+      $('#inventoryDetail h3').after(status);
+      // Using a weapon and equipping it are the same action; present one clear control.
+      $('#invUse').remove();
+    }
+    const cells=[...$('#bagGrid').children];
+    for(let y=0;y<2;y++)for(let x=0;x<5;x++){
+      const i=state.inventory.find(i=>i.slot==='bag'&&i.id===state.equipped&&x>=i.x&&x<i.x+ITEMS[i.id].w&&y>=i.y&&y<i.y+ITEMS[i.id].h);
+      if(i){cells[y*5+x].classList.add('equipped-item');cells[y*5+x].title=ITEMS[i.id].name+' · equipped';}
+    }
+    [...$('#pockets').children].forEach((b,p)=>{if(state.inventory.some(i=>i.slot==='pocket'&&i.p===p&&i.id===state.equipped))b.classList.add('equipped-item');});
+  };
+  const originalEquip=equip;
+  equip=function(id){
+    const before=state.equipped; originalEquip(id);
+    if(before!==state.equipped){
+      if(!$('#panel').hidden&&tab==='inventory')inventoryPanel();
+      updateHUD(); autoSave('Equipment changed');
+    }
+  };
+  const originalPut=putItem;
+  putItem=function(id,placement){
+    const count=state.inventory.length; originalPut(id,placement);
+    if(state.inventory.length>count){selectedItem=state.inventory.at(-1);inventoryPanel();}
+  };
   const originalSettings = settingsPanel;
   settingsPanel = function() {
     originalSettings();
@@ -138,6 +187,10 @@
   renderWorld=function(t){if(!preferences().bob)walkBob=0;originalRender(t);};
   updateHUD=function(){
     originalHUD();if(!preferences().bob)walkBob=0;
+    const weapon=state.equipped;
+    $('#weaponLabel').textContent=weapon=== 'wrench'?'WRENCH':weapon==='wood'?'HANDLE':'FISTS';
+    $('#attackButton').setAttribute('aria-label','Attack with '+(weapon?ITEMS[weapon].name:'fists'));
+    $('#attackButton').title='Attack with '+(weapon?ITEMS[weapon].name:'fists');
     const current=selectedTarget()||nearest();
     $('#interactButton small').textContent=current?(current.npc?'TALK':'INSPECT'):'INTERACT';
     if(selectedTarget())$('#target').textContent=ITEMS[current.id].name+' · ◇ INSPECT';

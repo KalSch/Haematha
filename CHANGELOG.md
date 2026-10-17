@@ -1,3 +1,12 @@
+# 0.2.2 — Equipment and action buttons
+
+- Move equipping into Inventory, removing the misleading inspection action for uncollected weapons.
+- Select an item after it is collected so its inventory actions are immediately available.
+- Show a current-equipment display, equipped-item outline, explicit Equip/Unequip state, and the selected weapon on the Attack button.
+- Autosave equipment changes; dropping the equipped weapon restores fists.
+- Place Attack on the left of an upward-tilted diamond on the right side of the screen, with Interact upper right and smaller Jump/Duck buttons at the other corners.
+- Keep the separate map screen and existing schema-1 saves.
+
 # 0.2.1 — Map screen
 
 - Open the map and its menu tabs on their own opaque full-screen view.

@@ -1,6 +1,10 @@
 # MARK OF HAEMATHA — First Summer
 
-**Build 0.2.1 · full-screen map revision · compatible with previous schema-1 saves.**
+**Build 0.2.2 · equipment and action-button revision · compatible with previous schema-1 saves.**
+
+To equip a weapon, take it and place it in your backpack or a pocket. Inventory selects the newly collected item; press **Equip** there. The equipment display and item outline identify what is ready, and the Attack button changes to that weapon. **Unequip** returns to fists. Inspection no longer offers an Equip action for an item still on the ground.
+
+The right-hand action buttons form an upward-tilted diamond: the large Attack button is on its left, the large Interact button at its upper right, with smaller Jump and Duck buttons at the remaining corners. The arrangement is used in landscape and portrait.
 
 The map now opens a separate opaque full-screen view. The top-left map button stays available: press it again to return to play. Inventory, Workshop, Saves, and Settings remain tabs on that screen. The world pauses while the map/menu screen is open. The M key toggles it on PC; the Return button remains an alternative.
 
@@ -12,15 +16,15 @@ This is a working interface and simulation foundation, not the full game. It has
 
 ## Put it on GitHub Pages
 
-1. Extract `mark-of-haematha-v0.2.1-pwa.zip`.
-2. Upload the **contents of the `mark-of-haematha-v0.2.1` folder** to the existing repository root, replacing the previous build's matching files. For playing/installing, the required upload is `index.html`, `sw.js`, `manifest.webmanifest`, and the `icons` directory. All other files are editable sources, documentation, or developer tests. Uploading the ZIP alone will not run the game.
+1. Extract `mark-of-haematha-v0.2.2-pwa.zip`.
+2. Upload the **contents of the `mark-of-haematha-v0.2.2` folder** to the existing repository root, replacing the previous build's matching files. For playing/installing, the required upload is `index.html`, `sw.js`, `manifest.webmanifest`, and the `icons` directory. All other files are editable sources, documentation, or developer tests. Uploading the ZIP alone will not run the game.
 3. In the repository, open **Settings → Pages**. Under deployment, choose **Deploy from a branch**, then your `main` branch and **/(root)**. Save.
 4. Open the Pages address GitHub provides once deployment finishes. Repository subpaths are supported; no source edits are needed.
 5. On iPhone, open that address in Safari, use **Share → Add to Home Screen**, then launch the icon. Let the first online load finish before testing offline. Landscape is recommended; iOS may not enforce the manifest's landscape preference.
 
 If uploading folders from an iPhone is awkward, use your preferred GitHub editor or development environment to unpack the ZIP into the repository, rather than trying to run it from the Files app. All source files are plain text. Pages needs HTTPS; opening `index.html` directly cannot install the PWA or cache it offline.
 
-When replacing build 0.1, wait for Pages deployment to finish, close every open game tab and Home Screen game window, then reopen online. The startup page and Settings identify **0.2.1**. Existing saves use the same storage key and schema; export a backup from the old build before updating if you have progress worth keeping. No deletion of website data is required.
+When replacing build 0.1, wait for Pages deployment to finish, close every open game tab and Home Screen game window, then reopen online. The startup page and Settings identify **0.2.2**. Existing saves use the same storage key and schema; export a backup from the old build before updating if you have progress worth keeping. No deletion of website data is required.
 
 For later updates, an available **Save & update** button activates a waiting build. Opening the game online also checks the page for a newer version. A build already controlled by the old 0.1 worker may need the one-time close/reopen described above.
 

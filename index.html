@@ -3,6 +3,21 @@
 :root{color-scheme:dark;--paper:#e5d7bc;--muted:#9eaa9e;--ink:#111c20;--gold:#c1a578;--line:#ffffff22;--red:#a44336}*{box-sizing:border-box}body{margin:0;background:#11191b;color:var(--paper);font:15px/1.5 Georgia,serif;overflow:hidden;overscroll-behavior:none}button,input,textarea,select{font:inherit}button{color:var(--paper);background:#253134;border:1px solid #8c927367;border-radius:4px;padding:10px 15px;cursor:pointer}button:hover{background:#3b4846}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #dcc39a;outline-offset:3px}button small{display:block;font:8px/1.6 system-ui;letter-spacing:.08em}input,textarea,select{background:#111d21;color:var(--paper);border:1px solid #777f6e;padding:10px;border-radius:3px}textarea{width:100%;resize:vertical}#world{display:block;width:100vw;height:100dvh;touch-action:none}#hud{position:fixed;inset:0;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);font-family:system-ui}#hud button,#joystick{pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}#hud button{background:#10212680;border-color:#ddd6ad44;backdrop-filter:blur(5px)}.left-tools{position:absolute;left:max(18px,env(safe-area-inset-left));top:max(16px,env(safe-area-inset-top));display:grid;gap:8px}.left-tools button,#notesButton{font-size:24px;padding:3px 12px}#notesButton{position:absolute;right:max(18px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top))}#clock{position:absolute;top:max(16px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);text-align:center;text-shadow:0 2px 4px #000;width:65%}#clock span,#clock small{display:block;font-size:9px;letter-spacing:.16em}#clock strong{font-weight:400;font-size:18px}#clock small{color:#c3c4b2;font-size:8px}#reticle{position:absolute;left:50%;top:50%;font-size:28px;transform:translate(-50%,-50%);color:#fff9}#target{position:absolute;top:57%;left:50%;transform:translateX(-50%);text-align:center;font-size:11px;text-shadow:0 2px 3px black}#joystick{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));left:max(28px,env(safe-area-inset-left));width:118px;height:118px;border:1px solid #e0dfbe45;background:#13292d45;border-radius:50%;backdrop-filter:blur(2px)}#joystick:before,#joystick:after{content:'';position:absolute;background:#d5d4b522;top:50%;left:10%;width:80%;height:1px}#joystick:after{transform:rotate(90deg)}#stick{position:absolute;width:45px;height:45px;top:36px;left:36px;background:#e2d7b226;border:1px solid #ddd8b75c;border-radius:50%}#joystick span{position:absolute;bottom:-17px;width:100%;text-align:center;font-size:8px;letter-spacing:.18em;color:#c5c9b6}#actions{position:absolute;right:max(22px,env(safe-area-inset-right));bottom:24px;display:grid;grid-template-columns:60px 72px;gap:9px;align-items:center}#actions button{height:66px;border-radius:50%;font-size:23px;padding:5px}#actions .small{width:53px;height:53px;font-size:20px}#vitals{position:absolute;bottom:max(25px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px}#vitals small{font-size:8px;letter-spacing:.1em}progress{width:115px;height:5px;accent-color:#bea97d}#restButton{font-size:22px;padding:0 9px}#toast{position:absolute;top:22%;left:50%;transform:translateX(-50%);background:#0c171be8;max-width:65vw;padding:9px 18px;border-left:2px solid var(--gold);opacity:0;transition:opacity .2s;font-size:12px;text-align:center}#toast.show{opacity:1}#damage{position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse,transparent 20%,#b52019b0);transition:opacity .3s}#panel,#notes{position:fixed;z-index:6;inset:7% 7%;padding:24px;background:#132126f5;border:1px solid #a89e7555;box-shadow:0 18px 80px #0009;overflow:auto;backdrop-filter:blur(12px)}[hidden]{display:none!important}.panel-head{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}.panel-head h2{margin:0;font-size:23px;font-weight:400}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button{padding:7px 13px;font:11px system-ui}.tabs .active{background:#b9a174;color:#182126}.columns{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{border:1px solid var(--line);background:#ffffff04;padding:17px;margin:10px 0}.card h3{margin:0 0 9px;font-weight:400}.muted,.fine{color:#9fa99e;font-size:12px}#townMap{width:100%;max-height:54vh;aspect-ratio:1.25;background:#243136;border:1px solid #667169;touch-action:none}.location-list button{display:block;width:100%;text-align:left;margin:9px 0}.location-list small{display:block;color:#aab4a5}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.inventory-grid{display:grid;grid-template-columns:repeat(5,62px);grid-template-rows:repeat(2,62px);gap:5px;position:relative;margin:15px 0}.cell{border:1px dashed #a7a98b55;background:#ffffff03;display:grid;place-content:center;font:10px system-ui;text-align:center;cursor:pointer}.cell.occupied{background:#82735544;border:1px solid #a89b72}.cell.selected{outline:2px solid #d7bc84}.pockets{display:flex;gap:5px}.pockets button{width:73px;min-height:65px;font:10px system-ui;padding:7px}.save-row{border-bottom:1px solid var(--line);padding:10px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}.save-row button{padding:5px 12px}.save-row small{display:block;color:#a9b1a4}#conversation{position:fixed;z-index:5;left:4%;top:17%;width:min(590px,65%);padding:20px;background:#102025ed;border:1px solid #ac9e7155;box-shadow:0 12px 60px #0007}.conversation-head{display:flex;align-items:center;gap:9px;font:11px system-ui;letter-spacing:.1em}.conversation-head span{flex:1}.conversation-head button{font:9px system-ui;padding:6px}#exchange{min-height:100px;max-height:32vh;overflow:auto;margin:18px 0}#exchange p{margin:8px 0}#exchange .you{font-style:italic;color:#a7b3aa;font-size:13px}#talkForm{display:flex;gap:7px}#talkInput{width:100%;min-width:0}#talkForm button{white-space:nowrap}#conversation>small{display:block;margin-top:10px;color:#8e9c93;font-size:10px}#notes{z-index:8;left:38%;right:3%;top:9%;bottom:8%}#notes textarea{height:37vh;background:#e5dbc5;color:#253333;font:16px/1.8 Georgia}#notes ul{padding:0;list-style:none}#notes li{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}#notes li span{flex:1}#inspect{position:fixed;z-index:9;inset:0;background:radial-gradient(ellipse at 35% 45%,#354348,#111b20 70%)}#inspect header{position:absolute;left:5%;right:5%;top:5%;display:flex;justify-content:space-between;font-size:22px}#objectView{position:absolute;top:15%;left:0;width:65%;height:70%;touch-action:none}#objectInfo{position:absolute;right:5%;width:28%;top:25%}#objectInfo button{display:block;margin:10px 0;width:100%}#inspect footer{position:absolute;bottom:5%;left:5%;font:11px system-ui;color:#aab2a4}#welcome{position:fixed;z-index:10;inset:0;overflow:auto;background:radial-gradient(ellipse at 70% 20%,#304347,#10191df5 65%);padding:5vh 8vw}.title-mark{float:right;font-size:160px;line-height:1;color:#a34d3a44;transform:rotate(-15deg)}.eyebrow{font:10px system-ui;letter-spacing:.25em;color:#bba579}h1{font-weight:400;line-height:1.05;font-size:clamp(38px,6vw,78px);letter-spacing:.07em;margin:22px 0}h1 em{color:#c7a875;font-style:normal}.tagline{font-size:22px}.welcome-actions{display:flex;gap:12px;flex-wrap:wrap;margin:25px 0}.welcome-actions button:first-child{background:#c3ab7d;color:#162127;font:12px system-ui;letter-spacing:.1em;padding:16px 24px}.fine{max-width:650px}details{max-width:700px;font-size:12px;color:#aeb6aa}summary{cursor:pointer;color:#d3c4a7}#bootStatus{font:11px system-ui;color:#b7a77f;margin-top:12px}.watch-banner{color:#d7bd83}label{display:block;margin:10px 0}h3{font-weight:400}.help-table{font-size:13px}.help-table td{padding:8px;border-bottom:1px solid var(--line)}@media(max-width:700px){#panel{inset:4%;padding:16px}.panel-head{flex-wrap:wrap;margin-bottom:10px;padding-bottom:9px}.panel-head h2{font-size:18px}.columns{gap:12px;grid-template-columns:1fr 1fr}.inventory-grid{grid-template-columns:repeat(5,43px);grid-template-rows:repeat(2,47px)}#notes{left:28%;padding:15px}#notes textarea{height:35vh}#conversation{left:3%;width:72%;padding:13px}#joystick{width:100px;height:100px;left:22px;bottom:23px}#stick{top:27px;left:27px}#actions{right:18px;gap:5px;grid-template-columns:48px 60px}#actions button{height:56px;font-size:20px}#actions .small{width:45px;height:45px}#vitals{gap:6px}progress{width:65px}#vitals small{display:none}#clock strong{font-size:14px}#clock{top:12px}#clock span{font-size:8px}#objectInfo{top:21%;width:33%;right:4%;font-size:12px}#objectView{width:60%}.title-mark{font-size:80px}.tagline{font-size:18px}#welcome{padding:5vh 7vw}.card{padding:11px}.pockets button{width:50px;padding:3px}.tabs button{padding:6px 9px}}@media(orientation:portrait){#clock{width:57%}#clock span{font-size:7px}#vitals{bottom:162px}.columns{grid-template-columns:1fr}#conversation{width:94%;top:16%}#notes{left:3%;top:32%;bottom:3%}#notes textarea{height:25vh}#inspect header{font-size:17px}#objectView{top:12%;height:44%;width:100%}#objectInfo{top:56%;left:7%;width:86%}#objectInfo .row{display:flex}#objectInfo button{width:auto;display:inline-block;margin-right:7px}#inspect footer{bottom:2%}#townMap{max-height:32vh}#panel{inset:3%}.title-mark{display:none}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 :root{--visible-height:100dvh;--visible-top:0px}
+/* Upward-tilted diamond: Attack left, Interact upper right, smaller movement actions. */
+#actions{display:block;width:184px;height:184px}
+#actions button{position:absolute;width:72px;height:72px;padding:5px;border-radius:50%;font-size:25px}
+#actions .small{width:50px;height:50px;font-size:21px}
+#actions #attackButton{left:0;top:112px}
+#actions #interactButton{left:112px;top:0}
+#actions #jumpButton{left:33px;top:33px}
+#actions #duckButton{left:101px;top:101px}
+#actions #attackButton{border-color:#d0b88c80;background:#26303488}
+.equipment-slot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 16px;padding:12px 16px;border:1px solid #bba276;background:#bba2760c}
+.equipment-slot small{display:block;font:9px system-ui;letter-spacing:.15em;color:#bba276}
+.equipment-slot strong{font-size:18px;font-weight:400}
+.equipment-status{color:#d6bd85}
+.equipped-item{border-color:#d6bd85!important;box-shadow:inset 0 0 0 1px #d6bd8588}
+#invEquip[aria-pressed=true]{background:#b9a174;color:#182126}
 /* Map, inventory, and the associated menu tabs are a separate opaque screen. */
 #panel.navigation-screen{inset:0;width:100%;height:100dvh;padding:max(16px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));background:#132126;border:0;box-shadow:none;backdrop-filter:none;display:flex;flex-direction:column;overflow:hidden}
 #panel.navigation-screen>.panel-head{padding-left:64px;min-height:46px;flex-shrink:0;margin-bottom:12px}
@@ -82,7 +97,7 @@ button,a,input,textarea{-webkit-tap-highlight-color:transparent}
 <div id="conversation" hidden><div class="conversation-head"><span id="speaker"></span><button id="endTalk">LEAVE ×</button><button id="talkNotes">▤ NOTES</button></div><div id="exchange" aria-live="polite"></div><form id="talkForm"><input id="talkInput" autocomplete="off" maxlength="240" placeholder="Ask a question or say something…" aria-label="Your response"><button>SAY ↵</button></form><small>Local dialogue prototype · ask naturally about people, the blood, the library, or help.</small></div>
 <div id="notes" hidden></div>
 <div id="inspect" hidden><header><span id="inspectTitle"></span><button id="closeInspect">RETURN ×</button></header><canvas id="objectView"></canvas><aside id="objectInfo"></aside><footer><div class="row"><button id="flipObject">FLIP</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="resetObject">RESET VIEW</button></div><p>Drag to turn and tilt · pinch to zoom · triple tap to return</p></footer></div>
-<div id="welcome"><div class="title-mark">⟐</div><p class="eyebrow">FIRST SUMMER / BUILD 0.2.1</p><h1>MARK OF<br><em>HAEMATHA</em></h1><p class="tagline">Something is wrong in Bellwether.</p><p>Your sister overslept again. Now your coworker hasn’t come in.<br>Your boss has just told you to cover the missing shift.</p><div class="welcome-actions"><button id="begin">ENTER THE PRINT WORKS →</button><button id="resume" hidden>CONTINUE SAVED GAME</button></div><p class="fine">An exploration prototype, not the finished game. A fixed test town, local NPC dialogue, simplified first-person rendering. No account or connection required.</p><details><summary>Controls &amp; installation</summary><p>Phone: landscape recommended. Left stick moves; drag the scene to look. Tap people to talk. Triple tap objects to inspect. Hold DUCK to watch a location. PC: WASD, drag to look, E interact, F inspect, Space jump, C crouch, M map, N notes. Escape closes panels.</p><p>On iPhone, open the hosted game in Safari → Share → Add to Home Screen. Offline play becomes available after one successful online load. Export important saves from Map → Saves.</p></details><div id="bootStatus"></div></div>
+<div id="welcome"><div class="title-mark">⟐</div><p class="eyebrow">FIRST SUMMER / BUILD 0.2.2</p><h1>MARK OF<br><em>HAEMATHA</em></h1><p class="tagline">Something is wrong in Bellwether.</p><p>Your sister overslept again. Now your coworker hasn’t come in.<br>Your boss has just told you to cover the missing shift.</p><div class="welcome-actions"><button id="begin">ENTER THE PRINT WORKS →</button><button id="resume" hidden>CONTINUE SAVED GAME</button></div><p class="fine">An exploration prototype, not the finished game. A fixed test town, local NPC dialogue, simplified first-person rendering. No account or connection required.</p><details><summary>Controls &amp; installation</summary><p>Phone: landscape recommended. Left stick moves; drag the scene to look. Tap people to talk. Triple tap objects to inspect. Hold DUCK to watch a location. PC: WASD, drag to look, E interact, F inspect, Space jump, C crouch, M map, N notes. Escape closes panels.</p><p>On iPhone, open the hosted game in Safari → Share → Add to Home Screen. Offline play becomes available after one successful online load. Export important saves from Map → Saves.</p></details><div id="bootStatus"></div></div>
 <script data-source="app.js">
 'use strict';
 // MARK OF HAEMATHA 0.1 — dependency-free, local-first exploration slice.
@@ -249,7 +264,7 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
 'use strict';
 // Touch, keyboard, and inspection refinements. Kept separate from world simulation.
 (() => {
-  const BUILD = '0.2.1';
+  const BUILD = '0.2.2';
   const defaults = { look: 1, move: 1, invertY: false, bob: true };
   let joystickPointer = null, selectedWorld = null, selectedUntil = 0;
   let tilt = -.12, gesture = null;
@@ -273,7 +288,7 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
   }
   // Old build saves retain schema 1. Missing control settings receive defaults.
   const originalLoad = loadSave;
-  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; updateLayout(); };
+  loadSave = function(save) { releaseInputs(); originalLoad(save); preferences(); selectedWorld = null; selectedItem = null; updateLayout(); };
   Haematha.load = loadSave;
   const originalClose = closeAll;
   closeAll = function() { releaseInputs(); originalClose(); updateLayout(); };
@@ -314,8 +329,57 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
   openInspect = function(id) {
     releaseInputs(); objectPointers.clear(); objectTap = []; gesture = null; tilt = -.12;
     originalInspect(id);
+    // Equipment is chosen in inventory, after the item has actually been collected.
+    $('#equipItem')?.remove();
+    if (ITEMS[id].power) {
+      $('#useItem')?.remove();
+      const hint = document.createElement('p'); hint.className = 'muted';
+      hint.textContent = state.inventory.some(i=>i.id===id) ? 'Equip this item from Inventory.' : 'Take this item, then equip it from Inventory.';
+      $('#objectInfo').append(hint);
+    }
   };
   Haematha.openInspect = openInspect;
+  const originalInventory = inventoryPanel;
+  inventoryPanel = function() {
+    originalInventory();
+    const name = state.equipped ? ITEMS[state.equipped].name : 'Fists';
+    const slot = document.createElement('section'); slot.id='equippedSlot'; slot.className='equipment-slot';
+    const caption=document.createElement('div');
+    const label=document.createElement('small'); label.textContent='CURRENTLY EQUIPPED';
+    const value=document.createElement('strong'); value.textContent=name;
+    caption.append(label,value);slot.append(caption);
+    if(state.equipped){const b=document.createElement('button');b.id='unequipCurrent';b.textContent='Unequip';b.onclick=()=>equip(state.equipped);slot.append(b);}
+    $('#panelBody').prepend(slot);
+    if(selectedItem && state.inventory.includes(selectedItem) && ITEMS[selectedItem.id].power){
+      const active=state.equipped===selectedItem.id;
+      $('#invEquip').textContent=active?'Unequip':'Equip';
+      $('#invEquip').setAttribute('aria-pressed',String(active));
+      const status=document.createElement('p');status.id='equipmentStatus';status.className=active?'equipment-status':'muted';
+      status.textContent=active?'Equipped — ready on the Attack button.':'Carried — select Equip to ready this item.';
+      $('#inventoryDetail h3').after(status);
+      // Using a weapon and equipping it are the same action; present one clear control.
+      $('#invUse').remove();
+    }
+    const cells=[...$('#bagGrid').children];
+    for(let y=0;y<2;y++)for(let x=0;x<5;x++){
+      const i=state.inventory.find(i=>i.slot==='bag'&&i.id===state.equipped&&x>=i.x&&x<i.x+ITEMS[i.id].w&&y>=i.y&&y<i.y+ITEMS[i.id].h);
+      if(i){cells[y*5+x].classList.add('equipped-item');cells[y*5+x].title=ITEMS[i.id].name+' · equipped';}
+    }
+    [...$('#pockets').children].forEach((b,p)=>{if(state.inventory.some(i=>i.slot==='pocket'&&i.p===p&&i.id===state.equipped))b.classList.add('equipped-item');});
+  };
+  const originalEquip=equip;
+  equip=function(id){
+    const before=state.equipped; originalEquip(id);
+    if(before!==state.equipped){
+      if(!$('#panel').hidden&&tab==='inventory')inventoryPanel();
+      updateHUD(); autoSave('Equipment changed');
+    }
+  };
+  const originalPut=putItem;
+  putItem=function(id,placement){
+    const count=state.inventory.length; originalPut(id,placement);
+    if(state.inventory.length>count){selectedItem=state.inventory.at(-1);inventoryPanel();}
+  };
   const originalSettings = settingsPanel;
   settingsPanel = function() {
     originalSettings();
@@ -386,6 +450,10 @@ if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWo
   renderWorld=function(t){if(!preferences().bob)walkBob=0;originalRender(t);};
   updateHUD=function(){
     originalHUD();if(!preferences().bob)walkBob=0;
+    const weapon=state.equipped;
+    $('#weaponLabel').textContent=weapon=== 'wrench'?'WRENCH':weapon==='wood'?'HANDLE':'FISTS';
+    $('#attackButton').setAttribute('aria-label','Attack with '+(weapon?ITEMS[weapon].name:'fists'));
+    $('#attackButton').title='Attack with '+(weapon?ITEMS[weapon].name:'fists');
     const current=selectedTarget()||nearest();
     $('#interactButton small').textContent=current?(current.npc?'TALK':'INSPECT'):'INTERACT';
     if(selectedTarget())$('#target').textContent=ITEMS[current.id].name+' · ◇ INSPECT';

@@ -1,10 +1,12 @@
-# Build 0.2.1 verification
+# Build 0.2.2 verification
 
 Date: 2026-10-17
 
 ## Automated result
 
-**73 checks passed: 52 base/map checks and 21 touch revision checks. No browser runtime errors recorded.**
+**86 checks passed: 65 base/map/equipment/layout checks and 21 touch revision checks. No browser runtime errors recorded.**
+
+Equipment checks cover no misleading Equip action on world inspection, automatic selection after collection, equipping in Inventory, visible equipment status and action changes, the Attack label changing to the weapon, unequipping to fists, clearing equipment when dropped, and retaining equipment after save restoration. Button geometry was checked for the upward-right arrangement, larger primary buttons, screen bounds, and lack of overlaps in landscape and portrait. Both the control cluster and equipment feedback were visually inspected.
 
 Map checks cover a full-viewport opaque screen in landscape and portrait, hidden world/movement controls, paused world time, the same map button returning to play, unchanged player position, M-key toggle, return from other menu tabs, and inventory inspection above the navigation screen. The landscape map screen was visually inspected.
 
